@@ -1,11 +1,204 @@
-3e32
-234
-324234234
-234
-234
-324
-234
-234
-34
-3434
-5435
+global with sharing class PaymentRemoter {
+    public String accountName {get; set;}
+    
+    public PaymentRemoter(){}  //empty constructor
+    
+    @RemoteAction
+    global static String submitPaymentMethod(String accountId, String pType){
+        //test transietnt account method call from server!
+        //this should be moved to client side javascript!
+        
+        String host='https://adsolutions.stage.yp.com';
+        String service='/BillingGateway/AccountManagement.svc/TransientAccount';
+        //String appId='2c9c7db7-1993-40ae-9049-2a77881b0c82';//dev
+        String appId='a764fd88-b264-44cd-8de3-1699e592f142';//stage
+        
+        String body = '{ "accountnumber":"' + accountId  + '", "creditcardtype":"' + pType + '"}';
+        
+        String response = postCalloutResponseContents(body, host + service + '?appid=' + appId);
+        return 'Hello World ' + accountId + response; 
+        
+    }
+    private static String GUIDGenerate(){
+        Blob b = Crypto.GenerateAESKey(128);
+        String h = EncodingUtil.ConvertTohex(b);
+        String guid =  h.SubString(0,8)+ '-' + h.SubString(8,12) + '-' + h.SubString(12,16) + '-' + h.SubString(16,20) + '-' + h.substring(20);
+        return guid.replaceAll('[^a-z^A-z^0-9]', '').substring(0, 16);
+    }
+    
+    
+   @RemoteAction
+    global static string sendPaymentDetails(string tokenId) {
+        //string appId='2c9c7db7-1993-40ae-9049-2a77881b0c82'; //working
+        string appId='236f1a19-b897-4bcf-88df-31b39ee4f458'; //SFDC
+        string url='https://dev-ccap-svc.yp.com/AccountManagement.svc/tokenaccount?appid=' + appId;
+        string clientId ='SFDC_IR';
+        //construct this request dynamically!  
+        //string body = '<TokenCreditCardDetails xmlns="http://schemas.datacontract.org/2004/07/Commerce.Contracts.Data.Account" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><AccountAddress><AddressId>0</AddressId><AddressLine1/><AddressLine2/><City/><Country/><State/><Zip/></AccountAddress><AccountNumber i:nil="true"/><ChargeAccountId>0</ChargeAccountId><Client>' + clientId + '</Client><IsAvsRequired>false</IsAvsRequired><Label>Srees credit card</Label><CreateUser>Superman</CreateUser><Email i:nil="true"/><IsBlocked>false</IsBlocked><IsDeleted>false</IsDeleted><IsPrimary>false</IsPrimary><IsTransient>true</IsTransient><NameonAccount>Spiderman</NameonAccount><OwnerChargeAccountId>0</OwnerChargeAccountId><OwnerID>781750232600000</OwnerID><OwnerSource>All</OwnerSource><OwnerType>User</OwnerType><TokenId>' + tokenId + '</TokenId><UpdateUser>BatmanAgain</UpdateUser><CreditCardType>Unknown</CreditCardType><ExpirationDate>0116</ExpirationDate><Comment>new account addition</Comment><Industry>eCommerce</Industry><OrderId>ce4661d2312z4970</OrderId><PaymentMethod>Credit</PaymentMethod><ReserveAmount>0</ReserveAmount><SecurityCode i:nil="true"/><SourceIPAddress>10.65.172.172</SourceIPAddress></TokenCreditCardDetails>';
+        // string body = '<TokenCreditCardDetails xmlns="http://schemas.datacontract.org/2004/07/Commerce.Contracts.Data.Account" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><AccountAddress><AddressId>0</AddressId><AddressLine1/><AddressLine2/><City/><Country/><State/><Zip/></AccountAddress><AccountNumber i:nil="true"/><ChargeAccountId>0</ChargeAccountId><Client>' + clientId + '</Client><CreateUser>Superman</CreateUser><Email i:nil="true"/><IsBlocked>false</IsBlocked><IsDeleted>false</IsDeleted><IsPrimary>false</IsPrimary><IsTransient>true</IsTransient><NameonAccount>Spiderman</NameonAccount><OwnerChargeAccountId>0</OwnerChargeAccountId><OwnerID>781750232600000</OwnerID><IsAvsRequired>false</IsAvsRequired><Label>Srees credit card</Label><OwnerSource>All</OwnerSource><OwnerType>User</OwnerType><TokenId>' + tokenId + '</TokenId><UpdateUser></UpdateUser><CreditCardType>Unknown</CreditCardType><ExpirationDate>0116</ExpirationDate><Comment>new account addition</Comment><Industry>eCommerce</Industry><OrderId>ce4661d2312z4970</OrderId><PaymentMethod>Credit</PaymentMethod><ReserveAmount>0</ReserveAmount><SecurityCode i:nil="true"/><SourceIPAddress>10.65.172.172</SourceIPAddress></TokenCreditCardDetails>';
+        // string body = '<TokenCreditCardDetails xmlns="http://schemas.datacontract.org/2004/07/Commerce.Contracts.Data.Account" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><AccountAddress><AddressId>0</AddressId><AddressLine1/><AddressLine2/><City/><Country/><State/><Zip/></AccountAddress><AccountNumber i:nil="true"/><ChargeAccountId>0</ChargeAccountId><Client>' + clientId + '</Client><Email i:nil="true"/><IsBlocked>false</IsBlocked><IsDeleted>false</IsDeleted><IsPrimary>false</IsPrimary><IsTransient>true</IsTransient><NameonAccount>Spiderman</NameonAccount><OwnerChargeAccountId>0</OwnerChargeAccountId><OwnerID>781750232600000</OwnerID><CreateUser>Superman</CreateUser><UpdateUser>BatmanAgain</UpdateUser><IsAvsRequired>false</IsAvsRequired><Label>Srees credit card</Label><OwnerSource>All</OwnerSource><OwnerType>User</OwnerType><TokenId>' + tokenId + '</TokenId><CreditCardType>Unknown</CreditCardType><ExpirationDate>0116</ExpirationDate><Comment>new account addition</Comment><Industry>eCommerce</Industry><OrderId>ce4661d2312z4970</OrderId><PaymentMethod>Credit</PaymentMethod><ReserveAmount>0</ReserveAmount><SecurityCode i:nil="true"/><SourceIPAddress>10.65.172.172</SourceIPAddress></TokenCreditCardDetails>';
+        // Instantiate a new http object
+        //new json payload
+        
+        //String tokenId = '279f5b68-ec80-47c2-a99e-6116966ef237';
+        Integer paymentMethod= 1; //1=credit 
+        String uniqueOrderID = GUIDGenerate();
+        //create an account address object
+        AccountAddress accountAddress= new AccountAddress(null,null,null,null,null,'94555');
+        //create payment object
+        Payment payment = new Payment(accountAddress,'SFDC','Sreekumar Menon','600219356800000',tokenId,'0117' ,uniqueOrderID,paymentMethod);
+
+		//serialize to json
+		
+        String payJSON = JSON.serialize(payment);
+        System.debug(payJSON);
+        
+        
+        Http h = new Http();
+    
+         // Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+        HttpRequest req = new HttpRequest();
+        
+        req.setEndpoint(url);
+        req.setHeader('Content-Type', 'application/json');
+        req.setBody(payJSON);  
+        req.setMethod('POST');
+       req.setTimeout(10000); //10 secs
+        // Send the request, and return a response
+        HttpResponse res = h.send(req);
+        return res.getBody();
+            
+    }
+    
+     @RemoteAction 
+    global static string getAutoPayDetails(string customerId) {
+        String appId='SFDC';
+        String secretKey='d27d4ecd-ac5d-4b33-82fa-211af8b95999';
+        long timestamp = System.now().getTime() ;
+        String placeholder = 'ts={0}&appid={1}&secret={2}';
+		List<String> fillers = new String[]{String.valueOf(timestamp),appid,secretKey};
+		String authKey = String.format(placeholder, fillers);
+ 		String md5Coded = EncodingUtil.convertToHex(Crypto.generateDigest('MD5', Blob.valueOf(authKey)));
+
+         
+        String url='https://adsolutions-api.dev.yp.com/billing/v1/customer/' + customerId + '/autopay?format=json&appid=SFDC&AuthKey=' + md5Coded;
+        
+         // Instantiate a new http object
+        Http h = new Http();
+    
+         // Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+        HttpRequest req = new HttpRequest();
+        
+        req.setEndpoint(url);
+       req.setHeader('Content-Type', 'application/json');
+   
+        req.setMethod('GET');
+        //req.setTimeout(10000); //10 secs
+        // Send the request, and return a response
+        HttpResponse res = h.send(req);
+        return res.getBody();
+            
+    }
+  
+  // Pass in the endpoint to be used using the string url
+  public static String postCalloutResponseContents(String body, String url) {
+
+    // Instantiate a new http object
+    Http h = new Http();
+
+     // Instantiate a new HTTP request, specify the method (GET) as well as the endpoint
+    HttpRequest req = new HttpRequest();
+    req.setEndpoint(url);
+    req.setHeader('Content-Type', 'application/json');
+    req.setBody(body);  
+    req.setMethod('POST');
+
+    // Send the request, and return a response
+    HttpResponse res = h.send(req);
+    return res.getBody();
+  }
+
+   public class Payment {
+	public AccountAddress AccountAddress;
+	public String AccountNumber;
+	public Integer ChargeAccountId;
+	public Integer Client;
+	public String CreateUser;
+	public String Email;
+	public Boolean IsBlocked;
+	public Boolean IsDeleted;
+	public Boolean IsPrimary;
+	public Boolean IsTransient;
+	public String NameonAccount;
+	public Integer OwnerChargeAccountId;
+    public String OwnerId;
+    public Integer OwnerSource;
+    public Integer OwnerType;
+    public String TokenId;
+    public String UpdateUser;
+    public Integer CreditCardType;
+    public String ExpirationDate;
+    public String Comment;
+    public Integer Industry;
+    public String OrderId;
+    public Integer PaymentMethod;
+    public Integer ReserveAmount;
+    public String SecurityCode;
+    public String SourceIPAddress;
+    
+    public Payment(AccountAddress address,String createUser,String nameonAccount,String customerId,String tokenId,String expirationDate,String orderId, Integer paymentMethod ){
+        this.AccountAddress= address;
+        this.AccountNumber = null;
+        this.ChargeAccountId = 0;
+        this.Client=18; //salesforce client id is 18 OR SFDC_IR
+        this.CreateUser =createUser;
+        this.Email =null;
+        this.IsBlocked = false;
+        this.IsDeleted = false;
+        this.IsPrimary  = false;
+        this.IsTransient = false;
+        this.NameonAccount = nameonAccount;
+        this.OwnerChargeAccountId = 0;
+        this.OwnerId=customerId;   //customerid
+        this.OwnerSource =0;
+        this.OwnerType=0;
+        this.TokenId = tokenId;
+        this.UpdateUser=null;
+        this.CreditCardType = 8;  //unknown
+        this.ExpirationDate = expirationDate;
+        this.comment = null;
+        this.Industry= 0;
+        this.OrderId = orderId; //unique sequence  TODO
+        this.PaymentMethod=paymentMethod; 
+        this.ReserveAmount=0;
+        this.SecurityCode = null;
+        this.SourceIPAddress= 'SFDC';
+        
+    }
+ 
+}
+
+public class AccountAddress{
+     public Integer AddressId;
+     public String AddressLine1;
+     public String AddressLine2;
+     public String City;
+     public String Country;
+     public String State;
+     public String Zip;
+     
+     public AccountAddress(String addressLine1,String addressLine2,String city,String country,String state,String zip){
+         this.AddressLine1 =addressLine1;
+         this.AddressLine2= addressLine2;
+         this.City=city;
+         this.Country=country;
+         this.State=state;
+         this.Zip=zip;
+         this.AddressId=0; //always pass zero for new 
+   
+         
+     }
+    
+}    
+}
+

@@ -1,0 +1,71 @@
+string body = '<TokenCreditCardDetails xmlns="http://schemas.datacontract.org/2004/07/Commerce.Contracts.Data.Account" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><AccountAddress><AddressId>30464385</AddressId><AddressLine1/><AddressLine2/><City/><Country/><State/><Zip/></AccountAddress><AccountNumber i:nil="true"/><ChargeAccountId>0</ChargeAccountId><Client>' + clientId + '</Client><CreateUser>Batman</CreateUser><Email i:nil="true"/><IsBlocked>false</IsBlocked><IsDeleted>false</IsDeleted><IsPrimary>false</IsPrimary><IsTransient>true</IsTransient><NameonAccount>Batman</NameonAccount><OwnerChargeAccountId>0</OwnerChargeAccountId><OwnerID>781750232600000</OwnerID><OwnerSource>All</OwnerSource><OwnerType>User</OwnerType><TokenId>' + tokenId + '</TokenId><UpdateUser>BatmanAgain</UpdateUser><CreditCardType>Visa</CreditCardType><ExpirationDate>0116</ExpirationDate><Comment>new account addition</Comment><Industry>eCommerce</Industry><OrderId>10_18_2011_0219_54_PM</OrderId><PaymentMethod>Credit</PaymentMethod><ReserveAmount>0</ReserveAmount><SecurityCode i:nil="true"/><SourceIPAddress>10.65.172.172</SourceIPAddress></TokenCreditCardDetails>';
+        
+
+ string body = '<TokenCreditCardDetails xmlns="http://schemas.datacontract.org/2004/07/Commerce.Contracts.Data.Account" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><AccountAddress><AddressId>0</AddressId><AddressLine1/><AddressLine2/><City/><Country/><State/><Zip/></AccountAddress><AccountNumber i:nil="true"/><ChargeAccountId>0</ChargeAccountId><Client>' + clientId + '</Client><Email i:nil="true"/><IsBlocked>false</IsBlocked><IsDeleted>false</IsDeleted><IsPrimary>false</IsPrimary><IsTransient>true</IsTransient><NameonAccount>Spiderman</NameonAccount><OwnerChargeAccountId>0</OwnerChargeAccountId><OwnerID>781750232600000</OwnerID><CreateUser>Superman</CreateUser><UpdateUser>BatmanAgain</UpdateUser><IsAvsRequired>false</IsAvsRequired><Label>Srees credit card</Label><OwnerSource>All</OwnerSource><OwnerType>User</OwnerType><TokenId>' + tokenId + '</TokenId><CreditCardType>Unknown</CreditCardType><ExpirationDate>0116</ExpirationDate><Comment>new account addition</Comment><Industry>eCommerce</Industry><OrderId>ce4661d2312z4970</OrderId><PaymentMethod>Credit</PaymentMethod><ReserveAmount>0</ReserveAmount><SecurityCode i:nil="true"/><SourceIPAddress>10.65.172.172</SourceIPAddress></TokenCreditCardDetails>';
+       
+
+{"UpdateUser":null,"TokenId":"279f5b68-ec80-47c2-a99e-6116966ef237","SourceIPAddress":"SFDC","SecurityCode":null,"ReserveAmount":0,"PaymentMethod":1,"OwnerType":0,"OwnerSource":0,"OwnerId":"600219356800000","OwnerChargeAccountId":0,"OrderId":"ce4661d2312z4970","NameonAccount":"Sreekumar Menon","IsTransient":false,"IsPrimary":false,"IsDeleted":false,"IsBlocked":false,"Industry":0,"ExpirationDate":"0117","Email":null,"CreditCardType":8,"CreateUser":"SFDC","Comment":null,"Client":18,"ChargeAccountId":0,"AccountNumber":null,"AccountAddress":{"Zip":"94555","State":null,"Country":null,"City":null,"AddressLine2":null,"AddressLine1":null,"AddressId":0}}
+
+
+        "VISA", 4444444444444448
+"MasterCard", 5405222222222226
+"MasterCard", 5478050000000007
+"American Express", "343434343434343”
+"American Express", "371449635398431"
+
+Bank Routing number:
+122000247
+
+Bank account number:
+0888271156
+
+1220002470888271156
+
+
+public enum CreditCardType
+   {
+       [EnumMember]
+       [Description("Visa card type")]
+       Visa = 0,
+
+       [EnumMember]
+       [Description("MasterCard card type")]
+       MasterCard = 1,
+
+       [EnumMember]
+       [Description("AmericanExpress card type")]
+       AmericanExpress = 2,
+
+       [EnumMember]
+       [Description("Discover card type")]
+       Discover = 3,
+
+       [EnumMember]
+       [Description("Dinners Club card type")]
+       DinersClub = 4,
+
+       [EnumMember]
+       [Description("Solo card type")]
+       Solo = 5,
+
+       [EnumMember]
+       [Description("Switch card type")]
+       Switch = 6,
+
+       [EnumMember]
+       [Description("Visa Delta card type")]
+       VisaDelta = 7,
+
+       [EnumMember]
+       [Description("Unknown")]
+       Unknown = 8
+   }
+be8fcaa045edca76
+
+   public static String GenerateOrderId()
+       {
+           string guid = Guid.NewGuid().ToString();
+           guid = Regex.Replace(guid, "[^A-Za-z0-9 _]", "");
+           // TODO: check db if first 8 chars of orderId is unique
+           return guid.Substring(0, 16);
+       }

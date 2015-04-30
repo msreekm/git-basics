@@ -1,0 +1,263 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Responsive ajax credit card payment validation - wsnippets.com</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+    body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: white;
+    }
+    h3{
+        color: #black;
+    }
+  </style>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="http://malsup.github.com/jquery.form.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() { 
+      var options = { 
+        success:       showResponse,
+        clearForm: true,
+        dataType : "json"
+      }; 
+      $('#creditcard').ajaxForm(options); 
+    }); 
+    function showResponse(response, statusText, xhr, $form)  { 
+     $(".validation-errors").html('');
+     if(response.success == true) {
+       $('.validation-errors').html("<div class='alert alert-success'>"+response.message+"</div>");
+     }
+     else{
+       $('.validation-errors').html("<div class='alert alert-danger'>"+response.message+"</div>");
+     }
+   } 
+ </script>
+ 
+</head>
+
+<body>
+
+  <div class="container">
+   <div class="row">
+    <div class="col-md-10 col-md-offset-1 ">
+     <ul class="nav nav-tabs">
+      <li role="presentation" class="active"><a href="responsive.html">Credit Card</a></li>
+      <li role="presentation" ><a href="bank.html">Bank Account</a></li>
+    </ul>
+  </div>
+</div>
+<div class="row">
+ <div class="col-md-10 col-md-offset-1 ">
+<h4 class="text-left">Add a new Credit Card</h4>
+  <hr>    
+  </div>
+  
+<div class="col-md-10 col-md-offset-1">
+  <form role="form" method="post" action="validate.php" id ="creditcard" class="well">
+    <div class="col-md-6  ">
+
+      <div class="validation-errors"></div>
+
+      <div class="form-group">
+        <label for="name">Name on Card</label>
+        <input type="text" name="name" placeholder="Name on card" class="form-control" id="name">
+      </div>
+       <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8">
+            <div class="form-group">
+              <label for="cardnumber">Card number</label>
+              <input type="text" name="cardnumber" placeholder="Card Number" class="form-control" id="cardnumber">
+            </div>
+         </div>
+          <div class="col-xs-4 col-sm-4 col-md-4">
+          <div class="form-group">
+              <label for="cardnumber">Card Type</label>
+              <div class="dropdown">
+                  <select class="form-control">
+                    <option value="one">Visa</option>
+                    <option value="two">Master Card</option>
+                    <option value="three">American Express</option>
+                    <option value="four">Capital One </option>
+                    <option value="five">Five</option>
+                </select>
+                </div>
+            </div>
+          </div>   
+       </div>     
+
+      <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8">
+          <label for="expiration">Expiry Date</label>
+          <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">                                    
+              <div class="form-group">
+                <input type="text" name="month" size="2" maxlength="2" placeholder="MM" class="form-control" id="expiration">
+              </div>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+              <div class="form-group">
+                <input type="text" name="year" size="4" maxlength="4" placeholder="YYYY" class="form-control" id="year">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4">
+          <div class="form-group">
+            <label for="cvv">CVV</label>
+            <input type="text" name="cvv" placeholder="CVV" size="4" maxlength="4" class="form-control" id="cvv">
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+    <div class="col-md-6 col-md-offset-0">
+
+      <div class="validation-errors"></div>
+      <div class="form-group">
+        <label for="name">Address</label>
+        <input type="text" name="name" placeholder="Name on card" class="form-control" id="name">
+      </div>
+      <div class="form-group">
+        <label for="cardnumber">Address2 (optional)</label>
+        <input type="text" name="cardnumber" placeholder="Card Number" class="form-control" id="cardnumber">
+      </div>
+      <div class="row">
+        <div class="col-xs-5 col-sm-5 col-md-5">
+          <label for="expiration">City</label>
+                                            
+              <div class="form-group">
+                <input type="text" name="city" size="10"  placeholder="City" class="form-control" id="expiration">
+              </div>
+           
+
+        </div>
+        <div class="col-xs-4 col-sm-4 col-md-4">
+          <label for="expiration">State</label>
+         
+              <div class="form-group">
+                <div class="dropdown">
+                  <select class="form-control">
+                    <option value="AL">Alabama</option>
+                  <option value="AK">Alaska</option>
+                  <option value="AZ">Arizona</option>
+                  <option value="AR">Arkansas</option>
+                  <option value="CA">California</option>
+                  <option value="CO">Colorado</option>
+                  <option value="CT">Connecticut</option>
+                  <option value="DE">Delaware</option>
+                  <option value="DC">District Of Columbia</option>
+                  <option value="FL">Florida</option>
+                  <option value="GA">Georgia</option>
+                  <option value="HI">Hawaii</option>
+                  <option value="ID">Idaho</option>
+                  <option value="IL">Illinois</option>
+                  <option value="IN">Indiana</option>
+                  <option value="IA">Iowa</option>
+                  <option value="KS">Kansas</option>
+                  <option value="KY">Kentucky</option>
+                  <option value="LA">Louisiana</option>
+                  <option value="ME">Maine</option>
+                  <option value="MD">Maryland</option>
+                  <option value="MA">Massachusetts</option>
+                  <option value="MI">Michigan</option>
+                  <option value="MN">Minnesota</option>
+                  <option value="MS">Mississippi</option>
+                  <option value="MO">Missouri</option>
+                  <option value="MT">Montana</option>
+                  <option value="NE">Nebraska</option>
+                  <option value="NV">Nevada</option>
+                  <option value="NH">New Hampshire</option>
+                  <option value="NJ">New Jersey</option>
+                  <option value="NM">New Mexico</option>
+                  <option value="NY">New York</option>
+                  <option value="NC">North Carolina</option>
+                  <option value="ND">North Dakota</option>
+                  <option value="OH">Ohio</option>
+                  <option value="OK">Oklahoma</option>
+                  <option value="OR">Oregon</option>
+                  <option value="PA">Pennsylvania</option>
+                  <option value="RI">Rhode Island</option>
+                  <option value="SC">South Carolina</option>
+                  <option value="SD">South Dakota</option>
+                  <option value="TN">Tennessee</option>
+                  <option value="TX">Texas</option>
+                  <option value="UT">Utah</option>
+                  <option value="VT">Vermont</option>
+                  <option value="VA">Virginia</option>
+                  <option value="WA">Washington</option>
+                  <option value="WV">West Virginia</option>
+                  <option value="WI">Wisconsin</option>
+                  <option value="WY">Wyoming</option>
+                </select>
+                </div>
+              </div>
+           
+
+        </div>
+        <div class="col-xs-3 col-sm-3 col-md-3">
+          <div class="form-group">
+            <label for="cvv">Zipcode</label>
+            <input type="text" name="zipcode" placeholder="Zip" size="5" maxlength="5" class="form-control" id="cvv">
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="row ">
+     <div class="col-md-4 col-md-offset-4" >
+    <button type="submit" class="btn  btn-primary btn-block btn-lg">Add Credit card</button>
+    </div>
+    </div>
+  </form>
+  </div>
+</div>
+
+<div class="row">
+ <div class="col-md-8 col-md-offset-1" >
+   <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Payment Accounts</th>
+                <th>Actions</th>  
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>ECP-XXXXXXX1123</td>
+                <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
+               
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>MC-XXXXXXXX3434</td>
+                <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
+                
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>PCARD-44444XXXXXX</td>
+                 <td><a href="#">Edit</a> / <a href="#">Delete</a></td>
+               
+            </tr>
+        </tbody>
+    </table>
+  </div>
+
+</div>
+
+</div> 
+
+
+
+</body>
+</html>

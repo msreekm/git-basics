@@ -1,0 +1,115 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>Responsive  credit card payment for Salesforce.com</title>
+  
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+    body {
+        padding-top: 40px;
+        padding-bottom: 40px;
+        background-color: white;
+    }
+    h3{
+        color: #black;
+    }
+  </style>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+  <script src="http://malsup.github.com/jquery.form.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() { 
+      var options = { 
+        success:       showResponse,
+        clearForm: true,
+        dataType : "json"
+      }; 
+      $('#creditcard').ajaxForm(options); 
+    }); 
+    function showResponse(response, statusText, xhr, $form)  { 
+     $(".validation-errors").html('');
+     if(response.success == true) {
+       $('.validation-errors').html("<div class='alert alert-success'>"+response.message+"</div>");
+     }
+     else{
+       $('.validation-errors').html("<div class='alert alert-danger'>"+response.message+"</div>");
+     }
+   } 
+ </script>
+ 
+</head>
+
+<body>
+
+  <div class="container">
+   <div class="row">
+    <div class="col-md-10 col-md-offset-1 ">
+     <ul class="nav nav-tabs">
+      <li role="presentation" ><a href="responsive.html">Credit Card</a></li>
+      <li role="presentation" class="active"><a href="bank.html">Bank Account</a></li>
+    </ul>
+  </div>
+</div>
+<div class="row">
+ <div class="col-md-10 col-md-offset-1 ">
+<h4 class="text-left">Add Bank Account</h4>
+  <hr>    
+  </div>
+  
+<div class="col-md-10 col-md-offset-1">
+  <form role="form" method="post" action="validate.php" id ="creditcard" class="well">
+    <div class="col-md-6  ">
+
+      <div class="validation-errors"></div>
+
+       <div class="row">
+        <div class="col-xs-8 col-sm-8 col-md-8">
+        <div class="form-group">
+                <label class="control-label" for="optradio">Account Type</label>
+
+                  <label class="radio-inline"><input type="radio" name="optradio">Checkings</label>
+                  <label class="radio-inline"><input type="radio" name="optradio">Savings</label>
+
+            </div>
+        </div>
+       </div>
+      <div class="form-group">
+        <label for="name">Bank Name</label>
+        <input type="text" name="name" placeholder="Name on card" class="form-control" id="name">
+      </div>
+      <div class="form-group">
+        <label for="cardnumber">Account Name</label>
+        <input type="text" name="cardnumber" placeholder="Account Name" class="form-control" id="cardnumber">
+      </div>
+      <div class="form-group">
+        <label for="cardnumber">Email Address</label>
+        <input type="text" name="cardnumber" placeholder="Email Address" class="form-control" id="cardnumber">
+      </div>
+          <div class="form-group">
+        <label for="cardnumber">Routing Number</label>
+        <input type="text" name="cardnumber" placeholder="Routing Number" class="form-control" id="cardnumber">
+      </div>
+      <div class="form-group">
+        <label for="cardnumber">Bank Account#</label>
+        <input type="text" name="cardnumber" placeholder="Bank Account" class="form-control" id="cardnumber">
+      </div>
+      
+    </div>
+    <div class="col-md-5 col-md-offset-1">
+        <img src="cheque.png">
+
+    </div>
+    <div class="row ">
+     <div class="col-md-5 col-md-offset-3" >
+    <button type="submit" class="btn btn btn-primary btn-block btn-lg">Add Bank Account</button>
+    </div>
+    </div>
+  </form>
+  </div>
+</div>
+</div> 
+</body>
+</html>

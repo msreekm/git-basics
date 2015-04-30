@@ -1,9 +1,200 @@
-234324
-23432
-432
-432
-432
-4
-234
-324
-34
+<apex:page controller="PaymentRemoter" docType="html-5.0" 
+           showHeader="false" showChat="false" standardStylesheets="false" 
+           applyHtmlTag="false" applyBodyTag="false">
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    
+    </head>
+
+<body>
+        
+ <script type="text/javascript">
+     //remoting call to controller method to submit payment method - NOTE- do not use this! 
+    
+ 
+   //jquery start
+     var $j = jQuery.noConflict();
+    
+     //document.ready!
+     $j(function() {
+         //console.log($j(this));
+    
+         //cache the dom objects!
+         var $ptype = $j('#ptype');  //input text
+         var $acct = $j('#acct');  //input text
+        
+         
+         
+         //jquery ajax call to submit payment method! -recommended approach!	
+         $j('#addPayment').on('click',function(){
+            
+             $j('#response').html("");  //clear prev response
+             //start
+            
+             //construct the json body 
+             var paymentMethod = {
+                 "accountnumber": $acct.val() ,  
+                 "creditcardtype": $ptype.val()  
+             };
+             console.log(paymentMethod);
+             
+             //var host='https://adsolutions.stage.yp.com';  //RP
+             //var service='/BillingGateway/AccountManagement.svc/TransientAccount';
+             var host ='https://dev-ccap.v.ev1.yp.com' ;  //ccap
+             var service= '/TokenManager.aspx?accountnumber=5478050000000007&creditcardtype=MasterCard&callbacksuccess=tokenManagerCallback';
+             //TokenManager.aspx?accountnumber=4444444444444448&creditcardtype=Visa';
+             //var appId= '2c9c7db7-1993-40ae-9049-2a77881b0c82'; //dev
+             // var appId = 'a764fd88-b264-44cd-8de3-9999999' ; //stage
+             
+             $j.ajax({
+                 type: "GET",
+            url: host+service,
+            dataType: 'jsonp',
+            jsonp: false,
+                 //jsonpCallback: myCallback,
+            error: function (httpReq, status, exception) {
+                console.log(status);
+            },
+            success: function(data) {
+                alert('success');
+            }
+
+             
+             });//ajax
+             
+         }); //addpayment
+         
+         myCallback = function (data) { //not used!
+        console.log('jsonp callback data' + data);
+    }
+       //jsonp callback
+       tokenManagerCallback =  function (data){
+           console.log(data);
+           $j('#response').html(data);
+           //now call the controller method to create the payment method! 
+           
+           postPayment(data.TokenId);
+         }
+         
+         //clear button to remove response text from document
+         $j('#clear').on('click',function(){
+             $j('#response').html("");
+            
+         }); //clear
+         
+         //autopay button to remove response text from document
+         $j('#autopay').on('click',function(){
+                   
+             $j('#response').append("sending request "); //clear previous response!    
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PaymentRemoter.getAutoPayDetails}',
+                '9147426026', 
+                function(result, event){
+                    if (event.status) {
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        
+                        $j('#response').append(result);
+                       
+                    } else if (event.type === 'exception') {
+                        $j('#response').html(
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>");
+                        
+                    } else {
+                        // document.getElementById("responseErrors").innerHTML = event.message;
+                        $j('#response').html(event.message);
+                        
+                    }
+                }, 
+                {escape: true}
+            ); //function
+            
+            
+         }); //autopay
+         
+         
+         //server controller post
+         function postPayment(tokenId){
+			 console.log('token ' + tokenId);      
+             $j('#response').append("sending request using "+ tokenId); //clear previous response!    
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PaymentRemoter.sendPaymentDetails}',
+                tokenId, 
+                function(result, event){
+                    if (event.status) {
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        
+                        $j('#response').append(result);
+                       
+                    } else if (event.type === 'exception') {
+                        $j('#response').html(
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>");
+                        
+                    } else {
+                        // document.getElementById("responseErrors").innerHTML = event.message;
+                        $j('#response').html(event.message);
+                        
+                    }
+                }, 
+                {escape: true}
+            ); //function
+         }  //postPayment
+         
+         
+         //server controller post
+         $j('#addpaymentServer').on('click',function(){
+			       
+             $j('#response').html(""); //clear previous response!    
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.PaymentRemoter.submitPaymentMethod}',
+                $acct.val(), 
+                $ptype.val(),
+                function(result, event){
+                    if (event.status) {
+                        // Get DOM IDs for HTML and Visualforce elements like this
+                        
+                        $j('#response').html(result);
+                       
+                    } else if (event.type === 'exception') {
+                        $j('#response').html(
+                            event.message + "<br/>\n<pre>" + event.where + "</pre>");
+                        
+                    } else {
+                        // document.getElementById("responseErrors").innerHTML = event.message;
+                        $j('#response').html(event.message);
+                        
+                    }
+                }, 
+                {escape: true}
+            ); //function
+         });  //addpayment
+
+     });//document.ready
+    
+//jquery end    
+     
+    </script>
+    Customer Id : <input id="acct" type="text" value="4444444444444448"/>
+    Type : <input id="ptype" type="text" value="Visa"/>
+    <p/>
+        
+        
+    <button id="addpaymentServer">Submit Payment Server!</button>   
+ 
+    
+     <button id="addPayment" >
+         Submit Payment AJAX!
+    </button>
+    <button id="clear">
+        Clear response!
+    </button>
+    
+        <button id="autopay">
+        Auto Pay Test Call 
+    </button>
+    <p/>     
+    <div id="response" data-role="panel" data-id="response">
+      [response] 
+    </div>
+   
+    </body>  
+</apex:page>
