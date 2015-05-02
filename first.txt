@@ -1,7 +1,7 @@
 global with sharing class PaymentRemoter {
     public String accountName {get; set;}
     
-    public PaymentRemoter(){}  //empty constructorsssss
+    public PaymentRemoter(){}  //empty constructors
     
     @RemoteAction
     global static String submitPaymentMethod(String accountId, String pType){
